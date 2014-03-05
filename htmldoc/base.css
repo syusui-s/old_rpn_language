@@ -1,0 +1,55 @@
+﻿/* BASE.CSS 2012*/
+
+body{
+	margin:auto;
+	width:70%;
+	color:#000000;
+	background-image:url("./bgimg01.png");
+}
+
+h1{
+	padding:0.5em;
+	background-color:#FFFFFF;
+}
+
+h2{
+	border-bottom: 2px solid #0000AA;/*文字の横に付箋のようなマークを入れる*/ 
+	padding-left: 5px;/*文字の左にスペース*/ 
+	color:#222222; /*文字の色*/ 
+} 
+
+h3{
+	border-left:6px solid #CCCCFF;
+	padding-left: 7px;
+}
+
+p{
+	margin-left:0.5em;
+	/* text-indent:1em; */
+}
+
+p#name{
+	text-align:right;
+	margin-left:0;
+	margin-top:-2.5em;
+}
+
+em{
+	color:#DD0000;
+}
+
+code{
+	background-color:#CCCCCC;
+	padding-left:0.5em;
+	padding-right:0.5em;
+	margin-left:0.5em;
+	margin-right:0.5em;
+}
+
+div.code{
+}
+
+div#content{
+	padding:15px;
+	background-image:url("./bgimg02.png");
+}

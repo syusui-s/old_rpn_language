@@ -1,0 +1,247 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="ja">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- <meta charset="UTF-8"> -->
+    <title>逆ポーランド関数電卓 | 靄谷 秋翠</title>
+    <link rel="stylesheet" type="text/css" href="base.css">
+</head>
+
+<body>
+<div id="content">
+<h1>逆ポーランド関数電卓ソフト</h1>
+<p id="name">靄谷 秋翠</p>
+<h2>はじめに</h2>
+<p><img src="./cui01.png" alt="電卓画面"></p>
+<p>
+今回は、関数電卓ソフトを制作しました。関数電卓は、logやsinなどの数学関数を計算できる計算機です。
+コンピュータで数学の数式を計算できるように設計しました。
+</p>
+<p>
+今回は入力方式に逆ポーランド記法を採用しています。米国のヒューレットパッカード社の一部の製品が採用している入力方式です。
+日本ではあまり普及していない方式なので、日本では見かけることがないかもしれません。<br>
+この関数電卓では、本物の逆ポーランド電卓とは違い、一行で入力する方式を採っています。
+</p>
+<p><img src="./gui01.png" alt="作ろうと思っていたもの"></p>
+<p>
+当初は、GUIの実装やさらに一般的な中置記法に対応し、
+演算機能をライブラリ化した関数電卓の構想を持っていましたが、
+今までに実装できたのは、演算機能とCUIの実装だけでした。
+このページでは、関数電卓のCUI版を紹介したいと思います。
+</p>
+<h2>特徴</h2>
+<h3>逆ポーランド記法</h3>
+<p>
+逆ポーランド記法は、数式を表わす方法の一種です。私たちは普段、数式を中置記法で表しています。<br>
+</p>
+<div class="code">
+	中置記法の例:
+	<code>4 * 6 + 1</code>
+</div>
+<p>
+このように、中置記法では、演算子（＋、－、×、÷など）を数と数の間に置くことで、それらの数を足したり、引いたりするという計算を表しています。<br>
+これに対し、ポーランド記法では、計算されるの後に演算子を置くことで、計算を表現します。<br>
+次の式は、先ほどの<code>4 * 6 + 1</code>を逆ポーランド記法で表したものです。<br>
+</p>
+<div class="code">
+	逆ポーランド記法の例：
+	<code>4 6 * 1 +</code>
+</div>
+<p>
+「<em>4</em>と<em>6</em>を<em>かけた</em>ものに、<em>1</em>を<em>足す</em>」と表現すればわかりやすいでしょうか。<br>
+赤文字で強調したところの順番と、式の順番が同じになっているのがわかりますか？<br>
+このように、逆ポーランド記法では、<em>演算子は前の要素に対して計算を行います</em>。
+</p>
+
+<h3>対話式入力</h3>
+<p>
+この関数電卓は、コンソール上で動作します。その特性上、対話式入力を採用しました（他の方式がしんどいだけです）。
+ちょうど当ページ上部の画像のようにユーザーが式を入力すると、コンピューターが式を計算し、答えてくれます。
+</p>
+<h3>大きな数に対応</h3>
+<p>
+整数型は、intよりも大きいlong型を採用しています。浮動小数点型は、doubleを採用しています。
+</p>
+
+<h2>使い方</h2>
+<h3>演算子・関数一覧</h3>
+<table border="2">
+<tr>
+	<th>演算子・関数</th>
+	<th>被演算子数</th>
+	<th>説明</th>
+	<th>使用例</th>
+</tr>
+<tr>
+	<td>+</td>
+	<td>2</td>
+	<td>加算（足し算） <code>OP1+OP2</code></td>
+	<td><code>OP1 OP2 +</code></td>
+</tr>
+
+<tr>
+	<td>-</td>
+	<td>2</td>
+	<td>減算（引き算） <code>OP1-OP2</code></td>
+	<td><code>OP1 OP2 -</code></td>
+</tr>
+
+<tr>
+	<td>*</td>
+	<td>2</td>
+	<td>乗算（かけ算） <code>OP1*OP2</code></td>
+	<td><code>OP1 OP2 *</code></td>
+</tr>
+
+<tr>
+	<td>/</td>
+	<td>2</td>
+	<td>除算（わり算） <code>OP1/OP2</code></td>
+	<td><code>OP1 OP2 /</code></td>
+</tr>
+
+<tr>
+	<td>mod</td>
+	<td>2</td>
+	<td>余剰 OP1をOP2でわったときのあまりを求めます<br><code>OP1 MOD OP2</code></td>
+	<td><code>OP1 OP2 mod</code></td>
+</tr>
+
+<tr>
+	<td>abs</td>
+	<td>1</td>
+	<td>絶対値を求めます。<code>|OP1|</code></td>
+	<td><code>OP1 abs</code></td>
+</tr>
+<tr>
+	<td>pm</td>
+	<td>1</td>
+	<td>+/-の符号を反転させます。</td>
+	<td><code>OP1 pm</code></td>
+</tr>
+
+<tr>
+	<td>1/x,inv</td>
+	<td>1</td>
+	<td>逆数を求めます。</td>
+	<td><code>OP1 1/x</code>,<code>OP1 inv</code></td>
+</tr>
+
+<tr>
+	<td>pow</td>
+	<td>2</td>
+	<td>べき乗を計算します。OP1のOP2乗を求めます。</td>
+	<td><code>OP1 OP2 pow</code></td>
+</tr>
+<tr>
+	<td>^2</td>
+	<td>1</td>
+	<td>OP1の平方（2乗）を求めます。</td>
+	<td><code>2 ^2</code></td>
+</tr>
+<tr>
+	<td>^3</td>
+	<td>1</td>
+	<td>OP1の立方（3乗）を求めます。</td>
+	<td><code>2 ^3</code></td>
+</tr>
+<tr>
+	<td>sqrt</td>
+	<td>1</td>
+	<td>OP1の平方根を求めます。</td>
+	<td><code>OP1 sqrt</code></td>
+</tr>
+<tr>
+	<td>cbrt</td>
+	<td>1</td>
+	<td>OP1の立方根を求めます。</td>
+	<td><code>OP1 cbrt</code></td>
+</tr>
+
+<tr>
+<td>lg</td>
+<td>1</td>
+<td>OP1の常用対数を求めます。<code>log_10 (OP1)</code></td>
+<td><code>OP1 lg</code></td>
+</tr>
+<tr>
+<td>ln</td>
+<td>1</td>
+<td>OP1の自然対数を求めます。<code>log_e (OP1)</code></td>
+<td><code>OP1 ln</code></td>
+</tr>
+<tr>
+<td>log</td>
+<td>2</td>
+<td>OP1を底とするOP2の対数を求めます。<code>log_OP1 (OP2)</code></td>
+<td><code>OP1 OP2 log</code></td>
+</tr>
+<tr>
+<td>sin</td>
+<td>1</td>
+<td>角度OP1の正接（サイン）を求めます。<code>sin(OP1)</code></td>
+<td><code>OP1 sin</code></td>
+</tr>
+<tr>
+<td>cos</td>
+<td>1</td>
+<td>角度OP1の余弦（コサイン）を求めます。<code>cos(OP1)</code></td>
+<td><code>OP1 cos</code></td>
+</tr>
+<tr>
+<td>tan</td>
+<td>1</td>
+<td>角度OP1の正接（タンジェント）を求めます。<code>tan(OP1)</code></td>
+<td><code>OP1 tan</code></td>
+</tr>
+
+
+</table>
+
+<h2>仕組み</h2>
+<p>
+このプログラムの仕組みを少し説明しようと思います。
+下の図をご覧ください。
+</p>
+<p>
+<img src="./img01.png" alt="大雑把な動作の仕組み">
+</p>
+<p>
+入力された式が正しいときの処理の流れです。
+<ol>
+	<li>入力を待ちます。Input> と表示されている状態です。</li>
+	<li>入力された文字列をスペースごとに分解します。</li>
+	<li>分解されたそれぞれの値を「要素」として扱うようにします。この時、それぞれの値が数なのか、演算子なのか判断します。</li>
+	<li>要素を並べた配列を作ります。</li>
+	<li>要素の配列から、最初から順番に、演算子・関数である要素を探していきます。なければ、8に移ります。</li>
+	<li>演算子・関数の演算に必要な要素を取り出してきます。</li>
+	<li>演算し、その結果で演算子・被演算子を上書きします。5に戻ります。</li>
+	<li>画面などに出力します。</li>
+</ol>
+</p>
+<p>
+実際の計算の様子です。<br>
+<ol>
+	<li><code>Input> 4 6 * 1 +</code> 入力値が入力されます。</li>
+	<li><code>["4","6","*","1","+"]</code> それぞれの値をスペースごとに分解します。</li>
+	<li><code>[4,整数]</code><code>[6,整数]</code><code>[*,演算子]</code><code>[1,整数]</code><code>[+,演算子]</code> それぞれを「要素」として扱います。</li>
+	<li><code>[ [4,整数],[6,整数],[*,演算子],[1,整数],[+,演算子] ]</code> 要素の配列を作ります。</li>
+	<li><code>[ [4,整数],[6,整数],<em>[*,演算子]</em>,[1,整数],[+,演算子] ]</code> 演算子・関数を見つけます。</li>
+	<li><code>[ [4,整数],[6,整数],[*,演算子] ]</code> 演算に必要な要素を取り出します。</li>
+	<li><code>4 * 6</code>を計算し、配列の<code>[4,整数],[6,整数],[*,演算子]</code>があった部分を計算結果の<code>[24,整数]</code>で上書きします。</li>
+	<li><code>[ [24,整数],[1,整数],<em>[+,演算子]</em> ]</code> 演算子・関数を見つけます。</li>
+	<li><code>[ [24,整数],[1,整数],[+,演算子] ]</code> 演算に必要な要素を取り出します。</li>
+	<li><code>24 + 1</code>を計算し、配列の<code>[24,整数],[1,整数],[+,演算子]</code>があった部分を計算結果の<code>[25,整数]</code>で上書きします。</li>
+	<li><code>[ [25,整数] ]</code> 演算子・関数はみつかりません。</li>
+	<li><code>25</code> 出力します。</li>
+</ol>
+</p>
+
+<h2>謝辞</h2>
+<p>
+C++の基礎を小林健一郎さんのサイト<a href="http://www.asahi-net.or.jp/~yf8k-kbys/newcpp0.html">C++入門</a>で勉強しました。
+
+</p>
+</div>
+</body>
+<html>
