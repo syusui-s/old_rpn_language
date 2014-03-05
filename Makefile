@@ -1,8 +1,8 @@
 CC		= g++
-CFLAGS	= -O2 -march=amdfam10 -mtune=amdfam10
+CFLAGS	= -O2 -W -Wall
 PROGRAM	= rpn
 OBJS	= strfunc.o main.o
-LIBS	= -lm -W -Wall
+LIBS	= -lm
 
 all:		$(PROGRAM)
 
